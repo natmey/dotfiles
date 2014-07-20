@@ -1,0 +1,125 @@
+;; fire up that emacs server
+(server-start)
+
+;; make sure the target directory is on your load-path
+(add-to-list 'load-path "~/.emacs.d")
+
+;; death to tab characters!
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+(setq indent-line-function 'insert-tab)
+
+;; better formatting for line numbering
+(setq linum-format (quote "%3d "))
+
+;;;
+;;; Org Mode
+;;;
+(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
+(add-to-list 'load-path "/usr/share/org-mode/lisp")
+(require 'org-install)
+(define-key global-map "\C-cl" 'org-store-link)
+
+
+;; Add notmuch configs
+(autoload 'notmuch "~/.emacs.d/custom-notmuch" "notmuch mail" t)
+
+;; BBDB -- contact db
+(setq bbdb-file "~/.emacs.d/bbdb")           ;; keep ~/ clean; set before loading
+(require 'bbdb)
+(setq 
+   bbdb-use-alternate-names t               ;; use AKA
+)
+
+;;;
+;;; Calendar settings
+;;;
+(require 'org-caldav)
+(setq org-caldav-url "https://calendar.example.com/dav/nat/Calendar"
+       org-caldav-calendar-id "personal"
+       org-caldav-inbox "~/cal/cal.org"
+       org-caldav-files '("~/cal/cal.org")
+       org-icalendar-timezone  "UTC"
+       org-agenda-files (list "~/cal/cal.org" 
+                              "~/othercal.org"))
+(require 'calfw)
+(require 'calfw-ical)
+(require 'calfw-org)
+(defun cfw:org-create-custom-source (file &optional color)
+  (make-cfw:source
+   :name file
+   :color (or color "Seagreen4")
+   :data 'cfw:org-schedule-period-to-calendar))
+ 
+(defun open-custom-calendar ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list
+    (cfw:org-create-source "#115599")  ; orgmode source
+   ))) 
+(custom-set-faces
+ '(cfw:face-annotation ((t :foreground "RosyBrown" :inherqit cfw:face-day-title)))
+ '(cfw:face-day-title ((t :background "#222222")))
+ '(cfw:face-default-content ((t :foreground "#bfebbf")))
+ '(cfw:face-default-day ((t :weight bold :inherit cfw:face-day-title)))
+ '(cfw:face-disable ((t :foreground "DarkGray" :inherit cfw:face-day-title)))
+ '(cfw:face-grid ((t :foreground "DarkGrey")))
+ '(cfw:face-header ((t (:foreground "#ffffff" :weight bold))))
+ '(cfw:face-holiday ((t :background "#222222" :foreground "#aa0000" :weight bold)))
+ '(cfw:face-periods ((t :foreground "cyan")))
+ '(cfw:face-saturday ((t :foreground "#aa0000" :background "#222222" :weight bold)))
+ '(cfw:face-select ((t :background "#444444")))
+ '(cfw:face-sunday ((t :foreground "#aa0000" :background "#222222" :weight bold)))
+ '(cfw:face-title ((t (:foreground "#fefefe" :weight bold :height 2.0 :inherit variable-pitch))))
+ '(cfw:face-today ((t :background: "grey10" :weight bold)))
+ '(cfw:face-today-title ((t :background "#aa0000" :weight bold)))
+ '(cfw:face-toolbar ((t :foreground "#333333" :background "#333333")))
+ '(cfw:face-toolbar-button-off ((t :background "#333333" :foreground "#ffffff" :weight bold)))
+ '(cfw:face-toolbar-button-on ((t :background "#333333" :foreground "#ffffff" :weight bold))))
+
+
+;;; Get rid of ~ emacs turd files
+(setq
+   backup-by-copying t      ; don't clobber symlinks
+   backup-directory-alist
+    '(("." . "~/.emacs-poo"))    ; don't litter my fs tree
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t)       ; use versioned backups
+
+;; Ssettings for markdown mode
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.mdwn\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+;; Add in settings for vcl (varnish config) mode
+(autoload 'vcl-mode "vcl-mode" "Major mode for editing vcl files." t)
+(add-to-list 'auto-mode-alist '("\\.vcl\\'" . vcl-mode))
+
+;; Encryption
+(put 'erase-buffer 'disabled nil)
+
+;; Add custom theme
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(load-theme 'nat-dark t)
+
+;; Get rid of window elements
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(browse-url-firefox-program "/home/nat/bin/iceweasel-xpra -P nat")
+ '(custom-safe-themes (quote ("b56a422c410989e60dd338222d6b9f8d1f1fd1765bb32f6514d3a41dda88ce2d" default)))
+ '(mm-automatic-display (quote ("text/plain" "text/enriched" "text/richtext" "text/x-verbatim" "text/x-vcard" "image/.*" "message/delivery-status" "multipart/.*" "message/rfc822" "text/x-patch" "text/dns" "application/pgp-signature" "application/emacs-lisp" "application/x-emacs-lisp" "application/x-pkcs7-signature" "application/pkcs7-signature" "application/x-pkcs7-mime" "application/pkcs7-mime" "application/pgp\\'" "text/x-org")))
+ '(mm-automatic-external-display (quote ("text/html")))
+ '(mm-discouraged-alternatives nil)
+ '(notmuch-saved-searches (quote (("inbox" . "tag:inbox") ("unread" . "tag:unread") ("Unread-no-libtech" . "tag:unread and not tag:libtech"))))
+ '(send-mail-function (quote sendmail-send-it)))
