@@ -19,15 +19,20 @@
 ;; this will keep unused sent mail buffers from piling up
 (setq message-kill-buffer-on-exit t)
 
-;; ;;  Add a toggle keybinding for "w" as unread/inbox toggle
+;; Add keybindings for search mode screens
 (define-key notmuch-search-mode-map "w"
   (lambda ()
-    "toggle unread and inbox tag for message"
+    "mark as read remove from inbox"
     (interactive)
     (notmuch-search-tag '("-inbox" "-unread"))
     (notmuch-search-next-thread)))
 
-
+(define-key notmuch-search-mode-map "u"
+  (lambda ()
+    "mark as unread and return to inbox"
+    (interactive)
+    (notmuch-search-tag '("+inbox" "+unread"))
+    (notmuch-search-next-thread)))
 
 (define-key notmuch-search-mode-map "S"
   (lambda ()
@@ -52,7 +57,7 @@
 
 (define-key notmuch-show-mode-map "v" 'notmuch-show-view-part)
 
-;; ;; gnus-alias
+;; gnus-alias
 (autoload 'gnus-alias-determine-identity "gnus-alias" "" t)
 (add-hook 'message-setup-hook 'gnus-alias-determine-identity)
 
@@ -85,7 +90,8 @@
     ))
     ;; Determine identity when message-mode loads
     (add-hook 'message-setup-hook 'gnus-alias-determine-identity)
-    ;; Sign messages by default.
+
+    ;; PGP Sign messages by default.
     (add-hook 'message-setup-hook 'mml-secure-sign-pgpmime)
 
 (setq gnus-button-url 'browse-url-generic

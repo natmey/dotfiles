@@ -1,0 +1,33 @@
+#!/bin/bash
+
+## This script is intended to run after offlineimap has sync'd
+## the email box.
+
+# it handles autotagging of messages on their way in
+  
+# Define the path to the notification script
+NOTIFICATION=/home/nat/.notmuch-notification
+
+# run notmuch new to pull new mails into notmuch db
+notmuch new
+
+# Mark everything by me as read
+notmuch tag -unread -- from:nat@stealthisemail.com
+
+# tag drupal stuff
+notmuch tag +g.d.o -- from:noreply@groups.drupal.org
+notmuch tag +drupal-sa -- to:security-news@drupal.org
+notmuch tag +drupal-themes -- to:themes@drupal.org
+
+# other assorted mailing lists
+notmuch tag +debian-sa -- to:debian-security-announce@lists.debian.org
+notmuch tag +debian-backports -- to:debian-backports@lists.debian.org
+notmuch tag +libtech -- to:liberationtech@lists.stanford.edu
+notmuch tag +libtech -- to:liberationtech@mailman.stanford.edu
+
+# other misc
+notmuch tag +github -- from:noreply@github.com
+
+# we're done with tagging, launch the notification
+
+"$NOTIFICATION"
