@@ -1,8 +1,12 @@
+;; elpa packages load after .emacs, meaning you can work with them
+;; unless you tell them to initialize first
+(package-initialize)
+
 ;; fire up that emacs server
 (server-start)
 
 ;; make sure the target directory is on your load-path
-(add-to-list 'load-path "~/.emacs.d")
+(add-to-list 'load-path "~/.emacs.load")
 
 ;; death to tab characters!
 (setq-default indent-tabs-mode nil)
@@ -24,8 +28,11 @@
 ;; Add notmuch configs
 (autoload 'notmuch "~/.emacs.d/custom-notmuch" "notmuch mail" t)
 
+;; Encryption
+(put 'erase-buffer 'disabled nil)
+
 ;; BBDB -- contact db
-(setq bbdb-file "~/.emacs.d/bbdb")           ;; keep ~/ clean; set before loading
+(setq bbdb-file "~/.emacs.load/bbdb")
 (require 'bbdb)
 (setq 
    bbdb-use-alternate-names t               ;; use AKA
@@ -89,7 +96,7 @@
    kept-old-versions 2
    version-control t)       ; use versioned backups
 
-;; Ssettings for markdown mode
+;; Settings for markdown mode
 (autoload 'markdown-mode "markdown-mode"
    "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.mdwn\\'" . markdown-mode))
@@ -100,26 +107,11 @@
 (autoload 'vcl-mode "vcl-mode" "Major mode for editing vcl files." t)
 (add-to-list 'auto-mode-alist '("\\.vcl\\'" . vcl-mode))
 
-;; Encryption
-(put 'erase-buffer 'disabled nil)
-
 ;; Add custom theme
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(add-to-list 'custom-theme-load-path "~/.emacs.load/themes")
 (load-theme 'nat-dark t)
 
 ;; Get rid of window elements
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(browse-url-firefox-program "/home/nat/bin/iceweasel-xpra -P nat")
- '(custom-safe-themes (quote ("b56a422c410989e60dd338222d6b9f8d1f1fd1765bb32f6514d3a41dda88ce2d" default)))
- '(mm-automatic-display (quote ("text/plain" "text/enriched" "text/richtext" "text/x-verbatim" "text/x-vcard" "image/.*" "message/delivery-status" "multipart/.*" "message/rfc822" "text/x-patch" "text/dns" "application/pgp-signature" "application/emacs-lisp" "application/x-emacs-lisp" "application/x-pkcs7-signature" "application/pkcs7-signature" "application/x-pkcs7-mime" "application/pkcs7-mime" "application/pgp\\'" "text/x-org")))
- '(mm-automatic-external-display (quote ("text/html")))
- '(mm-discouraged-alternatives nil)
- '(notmuch-saved-searches (quote (("inbox" . "tag:inbox") ("unread" . "tag:unread") ("Unread-no-libtech" . "tag:unread and not tag:libtech"))))
- '(send-mail-function (quote sendmail-send-it)))
